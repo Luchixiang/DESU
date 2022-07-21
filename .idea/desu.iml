@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="PYTHON_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/finetune/PPN2V" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/finetune/w2s" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/finetune/w2s/SR" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/finetune/w2s/denoise" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/finetune/denoising-fluorescence" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/finetune/denoising-fluorescence/denoising" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/DatasetCondensation" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+  <component name="TestRunnerService">
+    <option name="projectConfiguration" value="pytest" />
+    <option name="PROJECT_TEST_RUNNER" value="pytest" />
+  </component>
+</module>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/DL-SR" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/DatasetCondensation" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/PPN2V" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/RCAN" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/dataset-distillation" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/finetune/PPN2V" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/finetune/denoising-fluorescence" vcs="Git" />
+  </component>
+</project>
