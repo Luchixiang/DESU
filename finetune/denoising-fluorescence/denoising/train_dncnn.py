@@ -33,8 +33,8 @@ from unet import UNet, UpsamplerModel
 class Parser(argparse.ArgumentParser):
     def __init__(self):
         super(Parser, self).__init__(description='DnCNN')
-        self.add_argument('--exp-name', type=str, default='dncnn_np', help='experiment name')
-        self.add_argument('--exp-dir', type=str, default="./experiment2_full", help='directory to save experiments')
+        self.add_argument('--exp-name', type=str, default='dncnn', help='experiment name')
+        self.add_argument('--exp-dir', type=str, default="./experiment_dissimilar", help='directory to save experiments')
         self.add_argument('--post', action='store_true', default=False, help='post proc mode')
         self.add_argument('--debug', action='store_true', default=False, help='verbose stdout')
         
@@ -42,14 +42,14 @@ class Parser(argparse.ArgumentParser):
         self.add_argument('--depth', type=int, default=17, help='depth of DnCNN')
         self.add_argument('--width', type=int, default=64, help='width of DnCNN, i.e. intermediate channels')
         # data 
-        self.add_argument('--data-root', type=str, default="/userhome/34/cxlu/10/fmdd", help='directory to dataset root')
+        self.add_argument('--data-root', type=str, default="/mnt/sdb/cxlu/SR_Data/10/fmdd", help='directory to dataset root')
         self.add_argument('--imsize', type=int, default=256)
         self.add_argument('--in-channels', type=int, default=1)
         self.add_argument('--out-channels', type=int, default=1)
         self.add_argument('--transform', type=str, default='four_crop', choices=['four_crop', 'center_crop'])
         self.add_argument('--noise-levels-train', type=list, default=[1, 2, 4, 8, 16])
         self.add_argument('--noise-levels-test', type=list, default=[1])
-        self.add_argument('--captures', type=int, default=1, help='# captures per group')
+        self.add_argument('--captures', type=int, default=50, help='# captures per group')
         # training
         self.add_argument('--epochs', type=int, default=400, help='number of iterations to train')
         self.add_argument('--batch-size', type=int, default=8, help='input batch size for training')
@@ -58,6 +58,7 @@ class Parser(argparse.ArgumentParser):
         self.add_argument('--test-batch-size', type=int, default=2, help='input batch size for testing')
         self.add_argument('--seed', type=int, default=1, help='manual seed used in Tensor')
         self.add_argument('--cuda', type=int, default=0, help='cuda number')
+        self.add_argument('--weight', type=str)
         # logging
         self.add_argument('--ckpt-freq', type=int, default=20, help='how many epochs to wait before saving model')
         self.add_argument('--print-freq', type=int, default=100, help='how many minibatches to wait before printing training status')
@@ -116,9 +117,10 @@ mkdirs([args.train_dir, args.pred_dir])
 # if args.debug:
 #     print(model)
 #     print(model.model_size)
-#weight = '/userhome/34/cxlu/desu/weight_1e-3_l2_10_dupli/best.pt'
-#weight = '/home/cxlu/desu/weight_1e-3_10_mito_similar/best.pt'
-weight = '/userhome/34/cxlu/desu/weight_1e-3_10_mito_similar/best.pt'
+# weight = '/home/cxlu/desu/weight_1e-3_l2_10_dupli/best.pt'
+# weight = '/home/cxlu/desu/weight_1e-3_10_mito_dissimilar/best.pt'
+# weight = '/userhome/34/cxlu/desu/weight_1e-3_10_mito_similar/best.pt'
+weight = args.weight
 model = UNet(1, depth=3).to(device)
 upsampler = UpsamplerModel(scale=1).to(device)
 weight = torch.load(weight)
@@ -136,7 +138,7 @@ upsampler_dict = weight['upsamplers'][0]
 unParalled_upsampler_state_dict = {}
 for key in upsampler_dict.keys():
     unParalled_upsampler_state_dict[key.replace("module.", "") ] = upsampler_dict[key]
-# upsampler.load_state_dict(unParalled_upsampler_state_dict)
+upsampler.load_state_dict(unParalled_upsampler_state_dict)
 if args.transform == 'four_crop':
     # wide field images may have complete noise in center-crop case
     transform = transforms.Compose([

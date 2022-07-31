@@ -30,8 +30,10 @@ parser.add_argument("--net", type=str, default="D",
                     help='DnCNN (D), DnCNN_BUIFD (DF), MemNet (M), MemNet_BUIFD (MF), RIDNet (R)')
 parser.add_argument("--img_avg", type=int, default=16, help="Number of images pre-averaged (determines the noise level)")
 parser.add_argument('--warm', action='store_true', default=False)
-parser.add_argument('--gpu', default='6')
+parser.add_argument('--gpu', default='0')
+parser.add_argument('--weight', type=str, default='/home/cxlu/desu/weight_1e-3_16_mmd_final3/best.pt')
 parser.add_argument('--model', default='fullwarm')
+parser.add_argument('--data_path', default='/mnt/sdb/cxlu/SR_Data_processed/16_denoise/tissue/training_input')
 opt = parser.parse_args()
 
 
@@ -39,8 +41,9 @@ def main():
     # Load dataset
     os.environ['CUDA_VISIBLE_DEVICES'] = str(opt.gpu)
     print('Loading dataset ...\n')
-    data_path = '/mnt/sdb/cxlu/SR_Data_processed/16_denoise/tissue/training_input'
-    target_path = '/mnt/sdb/cxlu/SR_Data_processed/16_denoise/tissue/training_gt'
+    data_path = opt.data_path
+    target_path = data_path.replace('training_input', 'training_gt')
+    # target_path = '/mnt/sdb/cxlu/SR_Data_processed/16_denoise/tissue/training_gt'
     dataset = Dataset_modified(data_path, target_path, img_avg=opt.img_avg, patch_size=opt.patch_size,
                                stride=opt.stride)
     loader = DataLoader(dataset=dataset, num_workers=4, batch_size=opt.batch_size, shuffle=True)
@@ -69,7 +72,7 @@ def main():
     # net.apply(weights_init_kaiming)
     #weight = '/home/cxlu/desu/weight_1e-3_l2_mixup_5/best.pt'
    # weight = '/home/cxlu/desu/weight_1e-3_selected_16_uniform/best.pt'
-    weight = '/home/cxlu/desu/weight_1e-3_16_mmd_final3/best.pt'
+    weight = opt.weight
     weight = torch.load(weight)
     state_dict = weight['state_dict']
     unParalled_decoder_state_dict = {}

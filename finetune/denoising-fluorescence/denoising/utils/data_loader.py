@@ -122,6 +122,7 @@ class DenoisingFolder(torch.utils.data.Dataset):
         else:
             assert all([img_type in all_types for img_type in types])
             self.types = types
+        print(self.types)
         self.root = root
         self.train = train
         if train:
@@ -152,8 +153,6 @@ class DenoisingFolder(torch.utils.data.Dataset):
             if (os.path.isdir(os.path.join(root_dir, name)) and name in self.types)]
         print(subdirs)
         for subdir in subdirs:
-            if 'WideField_BPAE_R' not in subdir:
-                continue
             gt_dir = os.path.join(subdir, 'gt')
             for noise_level in self.noise_levels:
                 if noise_level == 1:
@@ -166,7 +165,7 @@ class DenoisingFolder(torch.utils.data.Dataset):
                     if self.train:
                         noisy_captures = []
                         file_list = sorted(os.listdir(noisy_fov_dir))[:self.captures]
-                        print(f'len file list: {len(file_list)}')
+                        # print(f'len file list: {len(file_list)}')
 
                         for fname in file_list:
                             if is_image_file(fname):
@@ -379,7 +378,7 @@ class DenoisingTestMixFolder(torch.utils.data.Dataset):
         if self.target_transform is not None:
             clean = self.target_transform(clean)
 
-        return noisy, clean
+        return  noisy, clean, noisy_file
 
     def __len__(self):
         return len(self.samples)
@@ -485,7 +484,7 @@ def load_denoising_test_mix(root, batch_size, noise_levels, loader=pil_loader,
     kwargs = {'num_workers': 4, 'pin_memory': True} \
         if torch.cuda.is_available() else {}
     data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, 
-        shuffle=True, drop_last=False, **kwargs)
+        shuffle=False, drop_last=False, **kwargs)
 
     return data_loader
 

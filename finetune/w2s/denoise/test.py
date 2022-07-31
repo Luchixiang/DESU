@@ -16,9 +16,10 @@ parser = argparse.ArgumentParser(description="Inference")
 parser.add_argument("--epoch", type=int, default=49, help="Number of training epochs")
 parser.add_argument("--net", type=str, default="D", help="DnCNN (D), MemNet (M), RIDNet (R)")
 parser.add_argument("--img_avg", type=int, default=1, help="Number of images pre-averaged (determines the noise level)")
-
+parser.add_argument('--model_dir', type=str)
 parser.add_argument("--test_path", type=str, default='../../data/all/avg1',
                     help="Directory where test images are stored")
+parser.add_argument('--weight')
 parser.add_argument("--gt_path", type=str, default='../../data/all/avg400', help="Directory where GT images are stored")
 opt = parser.parse_args()
 
@@ -75,6 +76,7 @@ def inference(model, upsampler, test_path, gt_path, results_dir):
 def main():
     model_name = f'{opt.net}_{opt.img_avg}'
     model_dir = os.path.join('../net_data/trained_denoisers_avg1_rotwarm/', model_name)
+    model_dir = opt.model_dir
     print('Testing with model %s at epoch %d, with %s' % (model_name, opt.epoch, opt.test_path))
 
     # model_channels = 1

@@ -7,19 +7,19 @@ from PIL import Image
 path = '/Users/Luchixiang/Downloads/Archive (2)'
 coarse_path = '/Users/Luchixiang/Downloads/coarse_img_point/Archive (1)'
 
-done = set()
-with open('background.txt', 'r') as fp:
-    for line in fp.readlines():
-        done.add(os.path.dirname(line.strip('\n')))
-with open('not_background.txt', 'r') as fp:
-    for line in fp.readlines():
-        done.add(os.path.dirname(line.strip('\n')))
+# done = set()
+# with open('background.txt', 'r') as fp:
+#     for line in fp.readlines():
+#         done.add(os.path.dirname(line.strip('\n')))
+# with open('not_background.txt', 'r') as fp:
+#     for line in fp.readlines():
+#         done.add(os.path.dirname(line.strip('\n')))
 for home, dirs, files in os.walk(path):
-    if '18MAA_31SP_MAP2' in home:
-        # 无法对齐
-        continue
-    if home in done:
-        continue
+    # if '18MAA_31SP_MAP2' not in home:
+    #     # 无法对齐
+    #     continue
+    # if home in done:
+    #     continue
     not_background_list = []
     background_list = []
     for file in files:
@@ -48,14 +48,15 @@ for home, dirs, files in os.walk(path):
             key = cv2.waitKey()
             if key == ord('n'):
                 not_background_list.append(os.path.join(home, file))
+                cv2.destroyAllWindows()
             elif key == ord('x'):
                 background_list.append(os.path.join(home, file))
-
-            cv2.destroyAllWindows()
-    with open('background.txt', 'a') as fp:
-        for file in background_list:
-            fp.write(file + '\n')
-    with open('not_background.txt', 'a') as fp:
-        for file in not_background_list:
-            fp.write(file + '\n')
+                cv2.destroyAllWindows()
+            key = cv2.waitKey()
+    # with open('background.txt', 'a') as fp:
+    #     for file in background_list:
+    #         fp.write(file + '\n')
+    # with open('not_background.txt', 'a') as fp:
+    #     for file in not_background_list:
+    #         fp.write(file + '\n')
 # 4M2H_34SP_MAP2

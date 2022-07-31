@@ -13,8 +13,9 @@ from apex.parallel import DistributedDataParallel as DDP
 from apex import amp
 import numpy as np
 import random
-from train import train_cnn
+from train2 import train_cnn
 from dataset import supervised_dataloader
+from dataset2 import supervised_selected_mmd_data_loader, supervised_dataloader, supervised_select_similar_data_loader, supervised_select_dissimilar_data_loader, supervised_selected_mmd_data_loader
 import shutil
 
 warnings.filterwarnings('ignore')
@@ -46,8 +47,14 @@ def train_distributed(args):
     #                           in upsamplers]
     model = nn.parallel.DataParallel(model)
     upsamplers = [nn.parallel.DataParallel(upsampler) for upsampler in upsamplers]
-    train_loader, val_loader = supervised_dataloader(args)
-    train_cnn(train_generator=train_loader, valid_generator=val_loader, args=args, optimizer=optimizer, model=model,
+    train_loaders, val_loader = supervised_selected_mmd_data_loader(args)
+    # train_loaders, val_loader = supervised_dataloader(args)
+    # if args.similar:
+    #     train_loaders, val_loader = supervised_select_similar_data_loader(args)
+    # else:
+    #     train_loaders, val_loader = supervised_select_dissimilar_data_loader(args)
+    # train_loaders, val_loader = supervised_select_dissimilar_data_loader(args)
+    train_cnn(train_generators=train_loaders, valid_generator=val_loader, args=args, optimizer=optimizer, model=model,
               criterion=criterion, upsamplers=upsamplers)
 
 
@@ -85,6 +92,14 @@ if __name__ == '__main__':
     parser.add_argument('--mixup', action='store_true', default=False)
     parser.add_argument('--finetune', default='15_')
     parser.add_argument('--amp', action='store_true', default=False)
+    parser.add_argument('--pickle_file', default=None)
+    parser.add_argument('--sample_num', default=15000)
+    parser.add_argument('--uniform', action='store_true', default=False)
+    parser.add_argument('--au', action='store_true', default=False)
+    parser.add_argument('--pickle_file_mid', default='./select_rotNet_16_mid.pkl')
+    parser.add_argument('--similar', action='store_true', default=False)
+    parser.add_argument('--simtissue', type=str, default='actin')
+    parser.add_argument('--zero', action='store_true', default=False)
     args = parser.parse_args()
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpus
 
@@ -114,5 +129,5 @@ if __name__ == '__main__':
     if not os.path.exists(args.output):
         os.makedirs(args.output)
     print(args)
-    # shutil.copy('./main3.py')
+    # shutil.copy('./main_whole.py')
     train_distributed(args)

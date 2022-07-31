@@ -140,5 +140,5 @@ if __name__ == '__main__':
     if not os.path.exists(args.output):
         os.makedirs(args.output)
     print(args)
-    # shutil.copy('./main3.py')
+    # shutil.copy('./main_whole.py')
     train_distributed(args)

@@ -89,9 +89,15 @@ class MMDDataset(Dataset):
 
 
 if __name__ == '__main__':
-    os.environ["CUDA_VISIBLE_DEVICES"] = '7'
-    source_root = '/mnt/sdb/cxlu/SR_Data_processed'
-    if not os.path.exists('mmd_features_layer-4.pkl'):
+    os.environ["CUDA_VISIBLE_DEVICES"] = '0'
+
+    import argparse
+    parser = argparse.ArgumentParser(description='Self Training benchmark')
+    parser.add_argument('--data', metavar='DIR', default='/mnt/sdb/cxlu/SR_Data_processed',
+                        help='path to dataset')
+    args = parser.parse_args()
+    source_root = args.datas
+    if not os.path.exists('mmd.pkl'):
         model = models.vgg16(pretrained=True).cuda()
         moodel = nn.Sequential(*list(model.children())[:-4])
         model.eval()
@@ -121,7 +127,7 @@ if __name__ == '__main__':
                 with open('mmd_features.pkl', 'wb') as f:
                     pickle.dump(tissue_features, f)
     else:
-        with open('mmd_features_layer-4', 'rb') as f:
+        with open('mmd_features.pkl', 'rb') as f:
             tissue_features = pickle.load(f)
     tissue_keys = sorted(tissue_features.keys())
     out_dict = dict()
@@ -140,5 +146,5 @@ if __name__ == '__main__':
             mmd /= multiple
             key = tissue_keys[i] + 'to' + tissue_keys[j]
             out_dict[key] = mmd.cpu().data
-    with open('./mmd_layer-4.pkl', 'wb') as f:
+    with open('./mmd.pkl', 'wb') as f:
         pickle.dump(out_dict, f)
